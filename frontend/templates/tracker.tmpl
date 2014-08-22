@@ -1,0 +1,117 @@
+<div class="row">
+	<div class="small-12 columns">
+		<h2>{{ .Name }} <small>Expense Tracker</small></h2>
+	</div>
+</div>
+<div class="row">
+	{{ if eq .Name ""}}
+	<div class="small-12 columns">
+		<h3>Welcome!</h3>
+		<p>Looks like it's your first time! We will make this as easy as possible for you.</p>
+		<form action="/t/save/{{.Hash}}" method="post">
+			<input type="hidden" name="id" value="{{.ID}}">
+			<label for="name">Name Your Tracker
+			<input type="text" name="name" id="name"></label>
+			<button type="submit">Update Tracker</button>
+		</form>
+		<p>Super easy!</p>
+	</div>
+	{{ else }}
+	<!-- Alert for when saving an item -->
+	<div class="small-12 columns">
+		{{ if eq .SavedItem true }}
+		<div class="alert-box">Item has been saved</div>
+		{{ end }}
+	</div>
+	<div class="small-12 columns">
+		<!-- Tabs nav -->
+		<ul class="tabs" data-tab role="tablist">
+		  <li class="tab-title active" role="presentational" ><a href="#addItem" role="tab" tabindex="0" aria-selected="true" controls="panel2-1">Add Item</a></li>
+		  <li class="tab-title" role="presentational" ><a href="#viewStats" role="tab" tabindex="0"aria-selected="false" controls="panel2-2">View Stats</a></li>
+		</ul>
+		<div class="tabs-content">
+		  <section role="tabpanel" aria-hidden="false" class="content active" id="addItem">
+		  	<!-- Add Item Tab -->
+		    <form action="/i/new/{{.Hash}}" method="post">
+		    	<p>Fill out the simple form below, we'll handle the rest.</p>
+		    	<input type="hidden" name="id" value="{{.ID}}">
+		    	<div class="row">
+		    		<div class="small-12 columns">
+		    			<label>Label
+		    				<input type="text" name="label" id="label" required autofocus>	
+		    			</label>
+		    		</div>
+		    	</div>
+		    	<p>Did you:</p>
+		    	<div class="row">
+		    		<div class="small-12 large-6 column">
+		    			<div class="row">
+		    				<div class="small-12 columns">
+		    					<label for="spend">Spend money?</label>
+		    					<div class="row">
+		    						<div class="small-12 columns">
+		    						  <div class="row collapse prefix-radius">
+		    						    <div class="small-1 columns">
+		    						      <span class="prefix">$</span>
+		    						    </div>
+		    						    <div class="small-11 columns">
+		    						      <input type="text" placeholder="0.00" name="spend" id="spend">
+		    						    </div>
+		    						  </div>
+		    						</div>
+		    					</div>
+		    				</div>
+		    			</div>
+		    		</div>
+		    		<div class="small-12 large-6 column">
+		    			<div class="row">
+		    				<div class="small-12 columns">
+		    					<label for="save">Save money?</label>
+		    					<div class="row">
+		    						<div class="small-12 columns">
+		    						  <div class="row collapse prefix-radius">
+		    						    <div class="small-1 columns">
+		    						      <span class="prefix">$</span>
+		    						    </div>
+		    						    <div class="small-11 columns">
+		    						      <input type="text" placeholder="0.00" name="save" id="save">
+		    						    </div>
+		    						  </div>
+		    						</div>
+		    					</div>
+		    				</div>
+		    			</div>
+		    		</div>
+		    	</div>
+		    	<button tye="submit">Record Item</button>
+		    </form>
+		  </section>
+		  <section role="tabpanel" aria-hidden="true" class="content" id="viewStats">
+		  	<!-- Stats tab -->
+		    <table role="grid">
+		    	<thead>
+		    		<tr>
+		    			<th>Day</th>
+		    			<th>Month</th>
+		    			<th>All</th>
+		    		</tr>
+		    	</thead>
+		    	<tbody>
+		    		<tr>
+		    			<td>${{ .Day }}</td>
+		    			<td>${{ .Month }}</td>
+		    			<td>${{ .All }}</td>
+		    		</tr>
+		    	</tbody>
+		    </table>
+		  </section>
+		</div>
+	</div>
+	{{ end }}
+</div>
+<div class="row">
+	<div class="small-12 columns">
+		<hr>
+		<p>Share me! <a href="/t/{{.Hash }}">http://<script type="text/javascript">document.write(window.location.host);</script>/t/{{.Hash}}</p>
+	</div>
+</div>
