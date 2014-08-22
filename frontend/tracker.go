@@ -15,6 +15,7 @@ type Tracker struct {
 	Day   float64
 	Month float64
 	All   float64
+	Items []*Item
 }
 
 func (t *Tracker) Setup(db *sql.DB) {
@@ -37,9 +38,20 @@ func (t *Tracker) FindByHash() {
 	var today = time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), 0, 0, 0, 0, time.UTC)
 	var month = time.Date(time.Now().Year(), time.Now().Month(), 0, 0, 0, 0, 0, time.UTC)
 	t.db.QueryRow("select id, name, hash from tracker where hash = ?", t.Hash).Scan(&t.ID, &t.Name, &t.Hash)
-	t.db.QueryRow("select sum(save) - sum(spend) from item where tracker_id = ? and timeslice = ?", t.ID, today).Scan(&t.Day)
-	t.db.QueryRow("select sum(save) - sum(spend) from item where tracker_id = ? and timeslice >= ? and timeslice <= ?", t.ID, month, today).Scan(&t.Month)
-	t.db.QueryRow("select sum(save) - sum(spend) from item where tracker_id = ?", t.ID).Scan(&t.All)
+	if t.ID != "" {
+		t.db.QueryRow("select sum(save) - sum(spend) from item where tracker_id = ? and timeslice = ?", t.ID, today).Scan(&t.Day)
+		t.db.QueryRow("select sum(save) - sum(spend) from item where tracker_id = ? and timeslice >= ? and timeslice <= ?", t.ID, month, today).Scan(&t.Month)
+		t.db.QueryRow("select sum(save) - sum(spend) from item where tracker_id = ?", t.ID).Scan(&t.All)
+
+		if rows, err := t.db.Query("select label, spend, save from item where tracker_id = ? and timeslice = ?", t.ID, today); err == nil {
+			for rows.Next() {
+				var item Item
+				if err := rows.Scan(&item.Label, &item.Spend, &item.Save); err == nil {
+					t.Items = append(t.Items, &item)
+				}
+			}
+		}
+	}
 }
 
 func (t *Tracker) Create() {

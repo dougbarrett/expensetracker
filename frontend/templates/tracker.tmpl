@@ -1,9 +1,4 @@
 <div class="row">
-	<div class="small-12 columns">
-		<h2>{{ .Name }} <small>Expense Tracker</small></h2>
-	</div>
-</div>
-<div class="row">
 	{{ if eq .Name ""}}
 	<div class="small-12 columns">
 		<h3>Welcome!</h3>
@@ -18,6 +13,25 @@
 		<p>Super easy!</p>
 	</div>
 	{{ else }}
+	<div class="fixed">
+	  <nav class="top-bar" data-topbar role="navigation">
+	  	<ul class="title-area">
+	  	  <li class="name">
+	  	    <h1><a href="#">{{ .Name }} <small>Expense Tracker</small></a></h1>
+	  	  </li>
+	  	   <!-- Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone -->
+	  	  <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
+	  	</ul>
+	  	<section class="top-bar-section">
+	      <!-- Left Nav Section -->
+	      <ul class="left" data-tab>
+	        <li class="active"><a href="#today">Today</a></li>
+	        <li><a href="#addItem">Add Item</a></li>
+	        <li><a href="#viewStats">View Stats</a></li>
+	      </ul>
+	    </section>
+	  </nav>
+	</div>
 	<!-- Alert for when saving an item -->
 	<div class="small-12 columns">
 		{{ if eq .SavedItem true }}
@@ -26,12 +40,28 @@
 	</div>
 	<div class="small-12 columns">
 		<!-- Tabs nav -->
-		<ul class="tabs" data-tab role="tablist">
-		  <li class="tab-title active" role="presentational" ><a href="#addItem" role="tab" tabindex="0" aria-selected="true" controls="panel2-1">Add Item</a></li>
-		  <li class="tab-title" role="presentational" ><a href="#viewStats" role="tab" tabindex="0"aria-selected="false" controls="panel2-2">View Stats</a></li>
-		</ul>
 		<div class="tabs-content">
-		  <section role="tabpanel" aria-hidden="false" class="content active" id="addItem">
+		  <section class="content active" id="today" role="tabpanel" aria-hidden="false">
+		  	<table>
+		  		<thead>
+		  			<tr>
+		  				<th>Label</th>
+		  				<th>Spend</th>
+		  				<th>Save</th>
+		  			</tr>
+		  		</thead>
+		  		<tbody>
+		  			{{ range .Items }}
+		  			<tr>
+		  				<td>{{ .Label }}</td>
+		  				<td>${{ .Spend }}</td>
+		  				<td>${{ .Save }}</td>
+		  			</tr>
+		  			{{ end }}
+		  		</tbody>
+		  	</table>
+		  </section>
+		  <section role="tabpanel" aria-hidden="false" class="content" id="addItem">
 		  	<!-- Add Item Tab -->
 		    <form action="/i/new/{{.Hash}}" method="post">
 		    	<p>Fill out the simple form below, we'll handle the rest.</p>
