@@ -35,6 +35,9 @@ func main() {
 	log.Printf("Session Name: %s", config.Session.Name)
 	log.Printf("Session Key: %s", config.Session.Key)
 	m := martini.Classic()
+
+	m.Use(gzip.All())
+
 	store := sessions.NewCookieStore([]byte(config.Session.Key))
 	m.Use(sessions.Sessions(config.Session.Name, store))
 
@@ -46,8 +49,6 @@ func main() {
 			http.Error(w, "CSRF token validation failed", http.StatusBadRequest)
 		},
 	}))
-
-	m.Use(gzip.All())
 
 	m.Use(render.Renderer(render.Options{
 		Layout: "layout",
