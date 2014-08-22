@@ -47,6 +47,7 @@ func showTracker(db *sql.DB, params martini.Params, r render.Render, session ses
 
 	if v == nil {
 		session.Set("trackingHash", retData.Hash)
+		r.Redirect("/t/" + retData.Hash)
 	}
 
 	if retData.ID != "" {
