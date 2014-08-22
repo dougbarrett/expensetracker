@@ -45,6 +45,10 @@ func showTracker(db *sql.DB, params martini.Params, r render.Render, session ses
 		r.Redirect("/t/" + retData.Hash)
 	}
 
+	if v == nil {
+		session.Set("trackingHash", retData.Hash)
+	}
+
 	if retData.ID != "" {
 		v := session.Get("savedItem")
 		if v == nil {
