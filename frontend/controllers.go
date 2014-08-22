@@ -27,11 +27,12 @@ func homepage(db *sql.DB, w http.ResponseWriter, r *http.Request) string {
 	return "Uh oh! Something went wrong, please try again later..."
 }
 
-func showTracker(db *sql.DB, params martini.Params, r render.Render, session sessions.Session, x csrf.CSRF) {
+func showTracker(db *sql.DB, params martini.Params, r render.Render, session sessions.Session, x csrf.CSRF, req *http.Request) {
 	var retData struct {
 		Tracker
 		SavedItem bool
 		Token     string
+		Host      string
 	}
 	retData.Setup(db)
 	retData.Hash = params["hash"]
@@ -49,6 +50,8 @@ func showTracker(db *sql.DB, params martini.Params, r render.Render, session ses
 		session.Set("trackingHash", retData.Hash)
 		r.Redirect("/t/" + retData.Hash)
 	}
+
+	retData.Host = req.Host
 
 	if retData.ID != "" {
 		v := session.Get("savedItem")
