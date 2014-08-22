@@ -12,6 +12,7 @@
 			<input type="hidden" name="id" value="{{.ID}}">
 			<label for="name">Name Your Tracker
 			<input type="text" name="name" id="name"></label>
+			<input type="hidden" name="_csrf" value="{{.Token}}">
 			<button type="submit">Update Tracker</button>
 		</form>
 		<p>Super easy!</p>
@@ -83,6 +84,7 @@
 		    			</div>
 		    		</div>
 		    	</div>
+		    	<input type="hidden" name="_csrf" value="{{.Token}}">
 		    	<button tye="submit">Record Item</button>
 		    </form>
 		  </section>

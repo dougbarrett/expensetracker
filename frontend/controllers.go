@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"github.com/codegangsta/martini-contrib/render"
 	"github.com/go-martini/martini"
+	"github.com/martini-contrib/csrf"
 	"github.com/martini-contrib/sessions"
 	"net/http"
 	"strconv"
@@ -26,14 +27,23 @@ func homepage(db *sql.DB, w http.ResponseWriter, r *http.Request) string {
 	return "Uh oh! Something went wrong, please try again later..."
 }
 
-func showTracker(db *sql.DB, params martini.Params, r render.Render, session sessions.Session) {
+func showTracker(db *sql.DB, params martini.Params, r render.Render, session sessions.Session, x csrf.CSRF) {
 	var retData struct {
 		Tracker
 		SavedItem bool
+		Token     string
 	}
 	retData.Setup(db)
 	retData.Hash = params["hash"]
 	retData.FindByHash()
+	retData.Token = x.GetToken()
+	v := session.Get("trackingHash")
+
+	if v != nil && v.(string) != retData.Hash {
+		session.Delete("trackingHash")
+		session.Set("trackingHash", retData.Hash)
+		r.Redirect("/t/" + retData.Hash)
+	}
 
 	if retData.ID != "" {
 		v := session.Get("savedItem")
