@@ -25,9 +25,12 @@
 	  	<section class="top-bar-section">
 	      <!-- Left Nav Section -->
 	      <ul class="left" data-tab>
-	        <li class="active"><a href="#today">Today</a></li>
-	        <li><a href="#addItem">Add Item</a></li>
-	        <li><a href="#viewStats">View Stats</a></li>
+	        {{ if ne .All 0.00 }}<li class="active"><a href="#today">Today</a></li>{{ end }}
+	        <li {{if eq .All 0.00 }}class="active"{{ end }}><a href="#addItem">Add Item</a></li>
+	        {{ if ne .All 0.00 }}<li><a href="#viewStats">View Stats</a></li>{{ end }}
+	      </ul>
+	      <ul class="left">
+	      	<li {{ if eq .Remember true }}class="active"{{ end }}><a href="/t/remember/{{.Hash}}">Remember Me</a></li>
 	      </ul>
 	    </section>
 	  </nav>
@@ -41,6 +44,7 @@
 	<div class="small-12 columns">
 		<!-- Tabs nav -->
 		<div class="tabs-content">
+		{{ if ne .All 0.00 }}
 		  <section class="content active" id="today" role="tabpanel" aria-hidden="false">
 		  	<table>
 		  		<thead>
@@ -61,7 +65,8 @@
 		  		</tbody>
 		  	</table>
 		  </section>
-		  <section role="tabpanel" aria-hidden="false" class="content" id="addItem">
+		  {{ end }}
+		  <section role="tabpanel" aria-hidden="false" class="content {{if eq .All 0.00 }}active{{ end }}" id="addItem">
 		  	<!-- Add Item Tab -->
 		    <form action="/i/new/{{.Hash}}" method="post">
 		    	<p>Fill out the simple form below, we'll handle the rest.</p>
@@ -118,6 +123,7 @@
 		    	<button tye="submit">Record Item</button>
 		    </form>
 		  </section>
+		  {{ if ne .All 0.00 }}
 		  <section role="tabpanel" aria-hidden="true" class="content" id="viewStats">
 		  	<!-- Stats tab -->
 		    <table role="grid">
@@ -137,6 +143,7 @@
 		    	</tbody>
 		    </table>
 		  </section>
+		  {{ end }}
 		</div>
 	</div>
 	{{ end }}

@@ -11,12 +11,30 @@ import (
 	"time"
 )
 
-func homepage(db *sql.DB, w http.ResponseWriter, r *http.Request) string {
+func rememberMe(params martini.Params, session sessions.Session, r render.Render) {
+	v := session.Get("rememberHash")
+
+	if v == nil {
+		session.Set("rememberHash", params["hash"])
+	} else if v.(string) == params["hash"] {
+		session.Delete("rememberHash")
+	} else if v.(string) != params["hash"] {
+		session.Set("rememberHash", params["hash"])
+	}
+
+	r.Redirect("/t/" + params["hash"])
+}
+
+func homepage(db *sql.DB, w http.ResponseWriter, r *http.Request, session sessions.Session) string {
 
 	w.Header().Set("Cache-Control", "no-cache, no-store, max-age=0, must-revalidate")
 	w.Header().Set("Expires", "0")
 	var tracker Tracker
 	tracker.Setup(db)
+
+	if v := session.Get("rememberHash"); v != nil {
+		http.Redirect(w, r, "/t/"+v.(string), http.StatusFound)
+	}
 	tracker.New()
 
 	if tracker.Hash == "" {
@@ -33,6 +51,7 @@ func showTracker(db *sql.DB, params martini.Params, r render.Render, session ses
 		SavedItem bool
 		Token     string
 		Host      string
+		Remember  bool
 	}
 	retData.Setup(db)
 	retData.Hash = params["hash"]
@@ -60,6 +79,12 @@ func showTracker(db *sql.DB, params martini.Params, r render.Render, session ses
 		} else {
 			retData.SavedItem = true
 			session.Delete("savedItem")
+		}
+		v = session.Get("rememberHash")
+		if v == nil {
+			retData.Remember = false
+		} else if v.(string) == retData.Hash {
+			retData.Remember = true
 		}
 		r.HTML(200, "tracker", retData)
 	} else {

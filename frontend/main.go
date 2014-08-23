@@ -57,6 +57,7 @@ func main() {
 	m.Map(SetupDB())
 
 	m.Get("/", homepage)
+	m.Get("/t/remember/:hash", rememberMe)
 	m.Get("/t/:hash", showTracker)
 	m.Post("/t/save/:hash", csrf.Validate, saveTracker)
 	m.Post("/i/new/:hash", csrf.Validate, saveItem)
